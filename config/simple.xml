@@ -1,0 +1,22 @@
+<!--
+//============================================================================
+// Name        : simple.xml
+//============================================================================
+-->
+
+<!--
+    Note: HistFactorySchema.dtd needs to be accessible.  It can be found in ROOT release area.
+    The file system path is relative to location of this XML file, not the executable.
+-->
+
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+
+<Combination OutputFilePrefix="./results/example" >
+
+  <Input>./config/channel1.xml</Input>
+
+  <Measurement Name="Meas1" Lumi="1." LumiRelErr="0.3" ExportOnly="True">
+    <POI>Lumi</POI>
+  </Measurement>
+
+</Combination>
