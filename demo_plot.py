@@ -6,6 +6,8 @@ import IPython
 import parsexml
 import histfactorycnv as hfc
 import numpy as np
+import subprocess
+
 
 def combine_graphs(graphs,positionhist):
   result = graphs[0].Clone()
@@ -30,12 +32,14 @@ def combine_graphs(graphs,positionhist):
 @click.argument('observable')
 @click.argument('plotfile')
 def shape(toplvlxml,workspace,channel,observable,plotfile):
+  subprocess.call('hist2workspace {}'.format(toplvlxml), shell = True)
+
   parsed_data = parsexml.parse('config/simple.xml','./')
   firstmeas = parsed_data['toplvl']['measurements'].keys()[0]
   rootfile = '{}_{}_{}_model.root'.format(parsed_data['toplvl']['resultprefix'],workspace,firstmeas)
   samples = parsed_data['channels'][channel]['samples']
   sample_definition = [(samples[k]['HFname'],samples[k]) for k in ['signal','background1','background2']]
-
+  
   f  = ROOT.TFile.Open(rootfile)
   ws = f.Get(workspace)
   x  = ws.var(hfc.obsname(observable,channel))
