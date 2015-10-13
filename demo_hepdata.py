@@ -4,36 +4,22 @@ import ROOT
 import histfactorycnv.hepdata as hft_hepdata
 import yaml
 import sys
+import parsexml
+
 
 @click.command()
-@click.argument('rootfile')
+@click.argument('toplvlvxml')
 @click.argument('workspace')
 @click.argument('channel')
 @click.argument('observable')
 @click.argument('outputfile')
-def main(rootfile,workspace,channel,observable,outputfile):  
-  sample_definition = [
-    ('signal',{
-      'systs': {
-      }
-    }),
-    ('background1',{
-      'systs': {
-        'b1norm':{
-          'HFname':'OverallSyst1',
-          'HFtype':'OverallSys',
-        },
-      }
-    }),
-    ('background2',{
-      'systs': {
-        'b2shape':{
-          'HFname':'HistoSys1',
-          'HFtype':'HistoSys',
-        },
-      }
-    })
-  ]
+def main(toplvlvxml,workspace,channel,observable,outputfile):  
+  parsed_data = parsexml.parse('config/simple.xml','./')
+  firstmeas = parsed_data['toplvl']['measurements'].keys()[0]
+  rootfile = '{}_{}_{}_model.root'.format(parsed_data['toplvl']['resultprefix'],workspace,firstmeas)
+  samples = parsed_data['channels'][channel]['samples']
+  sample_definition = [(samples[k]['HFname'],samples[k]) for k in ['signal','background1','background2']]
+  
   
   f  = ROOT.TFile.Open(rootfile)
   ws = f.Get(workspace)

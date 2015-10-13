@@ -3,6 +3,7 @@ import click
 import ROOT
 import math
 import IPython
+import parsexml
 import histfactorycnv as hfc
 import numpy as np
 
@@ -23,16 +24,21 @@ def combine_graphs(graphs,positionhist):
   return result
 
 @click.command()
-@click.argument('rootfile')
+@click.argument('toplvlxml')
 @click.argument('workspace')
 @click.argument('channel')
 @click.argument('observable')
 @click.argument('plotfile')
-def shape(rootfile,workspace,channel,observable,plotfile):
+def shape(toplvlxml,workspace,channel,observable,plotfile):
+  parsed_data = parsexml.parse('config/simple.xml','./')
+  firstmeas = parsed_data['toplvl']['measurements'].keys()[0]
+  rootfile = '{}_{}_{}_model.root'.format(parsed_data['toplvl']['resultprefix'],workspace,firstmeas)
+  samples = parsed_data['channels'][channel]['samples']
+  sample_definition = [(samples[k]['HFname'],samples[k]) for k in ['signal','background1','background2']]
+
   f  = ROOT.TFile.Open(rootfile)
   ws = f.Get(workspace)
   x  = ws.var(hfc.obsname(observable,channel))
-  
   
   mu_to_plot = 1
 
@@ -106,14 +112,10 @@ def shape(rootfile,workspace,channel,observable,plotfile):
   error_graph.Draw('sameE2')
   error_graph.SetFillColor(ROOT.kBlack)
   error_graph.SetFillStyle(3002)
-  #
-  # for band in syst_bands:
-  #   band.SetFillColor(ROOT.kBlack)
-  #   band.SetFillStyle(3002)
-  #   band.Draw('sameE2')
 
   datahist = hfc.extract_data(ws,channel,observable)
   datahist.SetMarkerStyle(20)
+  datahist.SetLineColor(ROOT.kBlack)
   datahist.SetMarkerColor(ROOT.kBlack)
   datahist.Draw('E0same')
 
