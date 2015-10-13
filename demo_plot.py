@@ -55,30 +55,6 @@ def shape(toplvlxml,workspace,channel,observable,plotfile):
   mc.SetSnapshot(aset)
   mu.setVal(oldval)
   
-  
-  sample_definition = [
-    ('signal',{
-      'systs': {
-      }
-    }),
-    ('background1',{
-      'systs': {
-        'systb1':{
-          'HFname':'OverallSyst1',
-          'HFtype':'OverallSys',
-        },
-      }
-    }),
-    ('background2',{
-      'systs': {
-        'systb2':{
-          'HFname':'HistoSys1',
-          'HFtype':'HistoSys',
-        },
-      }
-    })
-  ]
-  
   all_bands = []
 
   colors = {'signal':ROOT.kAzure-9,'background1':ROOT.kRed+1,'background2':ROOT.kViolet-1}
