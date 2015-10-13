@@ -9,6 +9,6 @@ to make sample workspace do:
 
 to produce sample plots and histfactory outputs
 
-    ./demo_plot.py config/simple.xml combined channel1 x plot.png
-    ./demo_hepdata.py config/simple.xml combined channel1 x data12.yaml
+    ./demo_plot.py config/simple.xml channel1 plot.png
+    ./demo_hepdata.py config/simple.xml channel1 data12.yaml
 

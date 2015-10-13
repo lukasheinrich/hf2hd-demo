@@ -27,10 +27,10 @@ def combine_graphs(graphs,positionhist):
 
 @click.command()
 @click.argument('toplvlxml')
-@click.argument('workspace')
 @click.argument('channel')
-@click.argument('observable')
 @click.argument('plotfile')
+@click.option('-b','--observable', default = 'x')
+@click.option('-w','--workspace', default = 'combined')
 def shape(toplvlxml,workspace,channel,observable,plotfile):
   subprocess.call('hist2workspace {}'.format(toplvlxml), shell = True)
 

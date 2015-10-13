@@ -9,10 +9,10 @@ import subprocess
 
 @click.command()
 @click.argument('toplvlxml')
-@click.argument('workspace')
 @click.argument('channel')
-@click.argument('observable')
 @click.argument('outputfile')
+@click.option('-b','--observable', default = 'x')
+@click.option('-w','--workspace', default = 'combined')
 def main(toplvlxml,workspace,channel,observable,outputfile):  
   parsed_data = parsexml.parse('config/simple.xml','./')
   firstmeas = parsed_data['toplvl']['measurements'].keys()[0]
