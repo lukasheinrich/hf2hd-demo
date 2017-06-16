@@ -8,10 +8,10 @@
     </Sample>
 
     <Sample Name="background1" HistoPath="" HistoName="background1">
-        <OverallSys Name="OverallSyst1" High="1.1" Low="0.9"/>
+        <OverallSys Name="OverallSystName1" High="1.1" Low="0.9"/>
     </Sample>
 
     <Sample Name="background2" HistoPath="" HistoName="background2">
-        <HistoSys Name="HistoSys1" HistoNameHigh="background2_sysup" HistoNameLow="background2_sysdown"/>
+        <HistoSys Name="HistoSysName1" HistoNameHigh="background2_sysup" HistoNameLow="background2_sysdown"/>
     </Sample>
 </Channel>

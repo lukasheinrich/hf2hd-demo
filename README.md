@@ -2,7 +2,7 @@
 
 to make sample workspace do:
     
-    ./make_data.py
+    ./make_mc.py
     hist2workspace config/simple.xml
     ./make_fake_data.py
     hist2workspace config/simple.xml

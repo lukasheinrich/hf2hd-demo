@@ -1,0 +1,34 @@
+dependent_variables:
+- header:
+    name: Data
+  values:
+  - value: 26.0
+- header:
+    name: signal
+  values:
+  - value: 0.0
+- header:
+    name: background1
+  values:
+  - errors:
+    - asymerror:
+        minus: -3.3999996185302734
+        plus: 3.4000015258789062
+      label: OverallSystName1
+    value: 34.0
+- header:
+    name: background2
+  values:
+  - errors:
+    - asymerror:
+        minus: 0.0
+        plus: 0.0
+      label: HistoSysName1
+    value: 0.0
+independent_variables:
+- header:
+    name: x
+  values:
+  - high: 600.0
+    low: 584.0
+name: Channel channel1

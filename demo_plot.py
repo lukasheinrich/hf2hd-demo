@@ -1,29 +1,11 @@
 #!/usr/bin/env python 
 import click
 import ROOT
-import math
-import IPython
-import parsexml
-import histfactorycnv as hfc
-import numpy as np
+import hftools.utils.parsexml as parsexml
+import hftools.utils as hfutils
 import subprocess
+from hftools.plotting import combine_graphs
 
-
-def combine_graphs(graphs,positionhist):
-  result = graphs[0].Clone()
-  for i in range(result.GetN()):
-    x,y = np.array([0],dtype = float),np.array([0],dtype = float)
-    result.GetPoint(i,x,y)
-
-    total_widths = [g.GetErrorYhigh(i)+g.GetErrorYlow(i) for g in graphs]
-    total_error = math.sqrt(sum(w**2 for w in total_widths))
-    
-    position = positionhist.GetBinContent(positionhist.FindBin(x))
-
-    result.SetPoint(i,x,position)
-    result.SetPointEYhigh(i,total_error/2.0)
-    result.SetPointEYlow(i,total_error/2.0)
-  return result
 
 @click.command()
 @click.argument('toplvlxml')
@@ -41,8 +23,8 @@ def shape(toplvlxml,workspace,channel,observable,plotfile):
   sample_definition = [(samples[k]['HFname'],samples[k]) for k in ['signal','background1','background2']]
   
   f  = ROOT.TFile.Open(rootfile)
-  ws = f.Get(workspace)
-  x  = ws.var(hfc.obsname(observable,channel))
+  ws = f.Get(str(workspace))
+  x  = ws.var(hfutils.obsname(observable,channel))
   
   mu_to_plot = 1
 
@@ -55,29 +37,26 @@ def shape(toplvlxml,workspace,channel,observable,plotfile):
   mc.SetSnapshot(aset)
   mu.setVal(oldval)
   
-  all_bands = []
-
   colors = {'signal':ROOT.kAzure-9,'background1':ROOT.kRed+1,'background2':ROOT.kViolet-1}
   stack = ROOT.THStack()
   all_noms = []
   
   syst_bands = []
   for sample,sampledef in reversed(sample_definition):
-    nom = hfc.extract_with_pars(ws,channel,observable,sample,{},reference_snapshot = 'ModelConfig__snapshot')
+    nom = hfutils.extract_with_pars(ws,channel,observable,sample,{}, reference_snapshot = 'ModelConfig__snapshot')
     nom.SetFillColor(colors[sample])
     nom.SetLineColor(ROOT.kBlack)
     stack.Add(nom)
     all_noms += [nom]
 
   topline_nosig = stack.GetStack().At(stack.GetStack().GetSize()-2)
-  # IPython.embed()
 
   for sample,sampledef in reversed(sample_definition):
     for syst,defin in sampledef['systs'].iteritems():
-      sysparsets = hfc.getsys_pars(defin['HFname'],defin['HFtype'], workspace = ws, observable = x,**(defin.get('additional_args',{})))
-      up,nomvar,down = [hfc.extract_with_pars(ws,channel,observable,sample,parset, reference_snapshot = 'ModelConfig__snapshot') for parset in sysparsets]
+      sysparsets = hfutils.getsys_pars(defin['HFname'],defin['HFtype'], workspace = ws, observable = x,**(defin.get('additional_args',{})))
+      up,nomvar,down = [hfutils.extract_with_pars(ws,channel,observable,sample,parset, reference_snapshot = 'ModelConfig__snapshot') for parset in sysparsets]
 
-      syst_bands += [hfc.make_band_root(up,down,nomvar)]
+      syst_bands += [hfutils.make_band_root(up,down,nomvar)]
 
   c = ROOT.TCanvas()
 
@@ -93,7 +72,7 @@ def shape(toplvlxml,workspace,channel,observable,plotfile):
   error_graph.SetFillColor(ROOT.kBlack)
   error_graph.SetFillStyle(3002)
 
-  datahist = hfc.extract_data(ws,channel,observable)
+  datahist = hfutils.extract_data(ws,channel,observable)
   datahist.SetMarkerStyle(20)
   datahist.SetLineColor(ROOT.kBlack)
   datahist.SetMarkerColor(ROOT.kBlack)
@@ -117,7 +96,7 @@ def shape(toplvlxml,workspace,channel,observable,plotfile):
   legend.AddEntry(datahist,'Data')
   legend.SetLineColor(0)
   
-  for h,name in zip(reversed(all_noms),[x[0] for x in sample_definition]):
+  for h,name in zip(reversed(all_noms),[sdf[0] for sdf in sample_definition]):
     legend.AddEntry(h,'signal (#mu={})'.format(mu_to_plot) if name=='signal' else name)
   legend.AddEntry(error_graph,'Syst. Uncert.')
 

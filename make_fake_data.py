@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import IPython
 import ROOT
 
 def main():
